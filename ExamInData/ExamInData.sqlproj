@@ -65,4 +65,12 @@
   <ItemGroup>
     <None Include="PublishLocations\ExamInData.publish.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\Classroom.sql" />
+    <Build Include="dbo\Tables\ExamSession.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="ExamInData.refactorlog" />
+  </ItemGroup>
 </Project>
