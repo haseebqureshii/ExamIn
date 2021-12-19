@@ -1,5 +1,7 @@
 ﻿using Caliburn.Micro;
 using ExamInDesktopUI.Helpers;
+using ExamInDesktopUI.Library.Api;
+using ExamInDesktopUI.Library.Models;
 using ExamInDesktopUI.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -27,9 +29,11 @@ namespace ExamInDesktopUI
         protected override void Configure()
         {
             _container.Instance(_container);
+
             _container
                 .Singleton<IWindowManager, WindowManager>()
                 .Singleton<IEventAggregator, EventAggregator>()
+                .Singleton<ILoggedInUserModel, LoggedInUserModel>()
                 .Singleton<IAPIHelper, APIHelper>();
 
             GetType().Assembly.GetTypes()
