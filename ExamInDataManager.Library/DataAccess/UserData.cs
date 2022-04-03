@@ -1,10 +1,6 @@
 ﻿using ExamInDataManager.Library.Internal.DataAccess;
 using ExamInDataManager.Library.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExamInDataManager.Library.DataAccess
 {
@@ -20,5 +16,15 @@ namespace ExamInDataManager.Library.DataAccess
 
             return output;
         } 
+
+        public void SaveUserImage(string Id, string image)
+        {
+            SqlDataAccess sql = new SqlDataAccess();
+
+            var p = new { Id = Id };
+            var q = new { image = image };
+
+            sql.SaveData<dynamic, dynamic>("dbo.spUserImageSave", p, q, "ExamInData");
+        }
     }
 }

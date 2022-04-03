@@ -40,5 +40,19 @@ namespace ExamInDataManager.Library.Internal.DataAccess
                     commandType: CommandType.StoredProcedure);
             }
         }
+
+        public void SaveData<T, U>(string storedProcedure, T param1, U param2, string connectionStringName)
+        {
+            string conectionString = GetConnectionString(connectionStringName);
+            List<object> parameters = new List<object>();
+            parameters.Add(param1);
+            parameters.Add(param2);
+
+            using (IDbConnection connection = new SqlConnection(conectionString))
+            {
+                connection.Execute(storedProcedure, parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }

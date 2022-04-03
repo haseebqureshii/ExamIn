@@ -6,8 +6,6 @@ using ExamInDesktopUI.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -28,7 +26,9 @@ namespace ExamInDesktopUI
 
         protected override void Configure()
         {
-            _container.Instance(_container);
+            _container.Instance(_container)
+                .PerRequest<IGetExamApi, GetExamApi>()
+                .PerRequest<ICloudApi, CloudAPI>();
 
             _container
                 .Singleton<IWindowManager, WindowManager>()

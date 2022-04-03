@@ -11,6 +11,13 @@
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            <Style TargetType="Button">
+                <Setter Property="Padding" Value="10,5" />
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="Padding" Value="2" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

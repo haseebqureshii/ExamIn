@@ -4,17 +4,15 @@ using ExamInDesktopUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
+using Google.Cloud.Firestore;
 
 namespace ExamInDesktopUI.Library.Api
 {
     public class APIHelper : IAPIHelper
     {
-        private HttpClient apiClient;
         private ILoggedInUserModel _loggedInUser;
 
         public APIHelper(ILoggedInUserModel loggedInUser)
@@ -23,18 +21,23 @@ namespace ExamInDesktopUI.Library.Api
             _loggedInUser = loggedInUser;
         }
 
+        public HttpClient ApiClient { get; private set; }
+
         private void InitializeClient()
         {
+            // Login API
             string api = ConfigurationManager.AppSettings["api"];
+            ApiClient = new HttpClient();
+            ApiClient.BaseAddress = new Uri(api);
+            ApiClient.DefaultRequestHeaders.Clear();
+            ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            apiClient = new HttpClient();
-            apiClient.BaseAddress = new Uri(api);
-            apiClient.DefaultRequestHeaders.Clear();
-            apiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<AuthenticatedUser> Authenticate(string username, string password)
         {
+
+
             var data = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant_type", "password"),
@@ -42,7 +45,7 @@ namespace ExamInDesktopUI.Library.Api
                 new KeyValuePair<string, string>("password", password),
             });
 
-            using (HttpResponseMessage response = await apiClient.PostAsync("/Token", data))
+            using (HttpResponseMessage response = await ApiClient.PostAsync("/Token", data))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -58,12 +61,12 @@ namespace ExamInDesktopUI.Library.Api
 
         public async Task GetLoggedInUserInfo(string token)
         {
-            apiClient.DefaultRequestHeaders.Clear();
-            apiClient.DefaultRequestHeaders.Accept.Clear();
-            apiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            apiClient.DefaultRequestHeaders.Add("Authorization", $"Bearer { token }");
+            ApiClient.DefaultRequestHeaders.Clear();
+            ApiClient.DefaultRequestHeaders.Accept.Clear();
+            ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            ApiClient.DefaultRequestHeaders.Add("Authorization", $"Bearer { token }");
 
-            using (HttpResponseMessage response = await apiClient.GetAsync("/api/User"))
+            using (HttpResponseMessage response = await ApiClient.GetAsync("/api/User"))
             {
                 if (response.IsSuccessStatusCode)
                 {
