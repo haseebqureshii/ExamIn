@@ -1,8 +1,8 @@
+using ExamInDataManager;
+using ExamInDataManager.App_Start;
+using Swashbuckle.Application;
 using System.Web.Http;
 using WebActivatorEx;
-using ExamInDataManager;
-using Swashbuckle.Application;
-using ExamInDataManager.App_Start;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -64,7 +64,7 @@ namespace ExamInDataManager
                         //c.BasicAuth("basic")
                         //    .Description("Basic HTTP Authentication");
                         //
-						// NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
+                        // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
                         //c.ApiKey("apiKey")
                         //    .Description("API Key Authentication")
                         //    .Name("apiKey")

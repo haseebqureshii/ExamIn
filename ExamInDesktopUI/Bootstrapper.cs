@@ -28,7 +28,8 @@ namespace ExamInDesktopUI
         {
             _container.Instance(_container)
                 .PerRequest<IGetExamApi, GetExamApi>()
-                .PerRequest<ICloudApi, CloudAPI>();
+                .PerRequest<ICloudApi, CloudAPI>()
+                .PerRequest<IMediaCaptureApi, MediaCaptureApi>();
 
             _container
                 .Singleton<IWindowManager, WindowManager>()

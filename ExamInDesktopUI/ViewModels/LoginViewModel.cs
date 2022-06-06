@@ -1,16 +1,8 @@
 ﻿using Caliburn.Micro;
 using ExamInDesktopUI.EventModels;
 using ExamInDesktopUI.Helpers;
-using ExamInDesktopUI.Library.Api;
 using System;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-using Windows.Media.Capture;
-using Windows.Media.MediaProperties;
-using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Windows.Storage.Streams;
 
 namespace ExamInDesktopUI.ViewModels
 {
@@ -20,20 +12,18 @@ namespace ExamInDesktopUI.ViewModels
         private string _password;
         private IAPIHelper _apiHelper;
         private IEventAggregator _events;
-        private ICloudApi _cloudEndPoint;
 
-        public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events, ICloudApi cloudEndPoint)
+        public LoginViewModel(IAPIHelper apiHelper, IEventAggregator events)
         {
             _apiHelper = apiHelper;
             _events = events;
-            _cloudEndPoint = cloudEndPoint;
         }
 
         public string UserName
         {
             get { return _userName; }
-            set 
-            { 
+            set
+            {
                 _userName = value;
                 NotifyOfPropertyChange(() => UserName);
                 NotifyOfPropertyChange(() => CanLogIn);
@@ -43,8 +33,8 @@ namespace ExamInDesktopUI.ViewModels
         public string Password
         {
             get { return _password; }
-            set 
-            { 
+            set
+            {
                 _password = value;
                 NotifyOfPropertyChange(() => Password);
                 NotifyOfPropertyChange(() => CanLogIn);
@@ -53,7 +43,7 @@ namespace ExamInDesktopUI.ViewModels
 
         public bool IsErrVisible
         {
-            get 
+            get
             {
                 bool output = false;
 
@@ -62,7 +52,7 @@ namespace ExamInDesktopUI.ViewModels
                     output = true;
                 }
 
-                return output; 
+                return output;
             }
         }
 
@@ -70,7 +60,7 @@ namespace ExamInDesktopUI.ViewModels
         public string ErrorMessage
         {
             get { return _errorMessage; }
-            set 
+            set
             {
                 _errorMessage = value;
                 NotifyOfPropertyChange(() => IsErrVisible);
@@ -91,37 +81,20 @@ namespace ExamInDesktopUI.ViewModels
             }
         }
 
-        MediaCapture mediaCapture;
-        public async Task TakeSnapshotAsync()
+        private bool _isLoading;
+        public bool IsLoading
         {
-            mediaCapture = new MediaCapture();
-            await mediaCapture.InitializeAsync();
-            mediaCapture.Failed += MediaCapture_Failed;
-
-            var myPictures = await StorageFolder.GetFolderFromPathAsync("D:\\FYP\\ExamIn\\ExamInDesktopUI.Library\\faces");
-            StorageFile file = await myPictures.CreateFileAsync("frame.jpg", CreationCollisionOption.GenerateUniqueName);
-
-            using (var captureStream = new InMemoryRandomAccessStream())
-            {
-                await mediaCapture.CapturePhotoToStreamAsync(ImageEncodingProperties.CreateJpeg(), captureStream);
-
-                using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                {
-                    var decoder = await BitmapDecoder.CreateAsync(captureStream);
-                    var encoder = await BitmapEncoder.CreateForTranscodingAsync(fileStream, decoder);
-
-                    var properties = new BitmapPropertySet {
-                    { "System.Photo.Orientation", new BitmapTypedValue(PhotoOrientation.Normal, PropertyType.UInt16) }
-                };
-                    await encoder.BitmapProperties.SetPropertiesAsync(properties);
-                    await encoder.FlushAsync();
-                }
+            get { return _isLoading; }
+            set 
+            { 
+                _isLoading = value;
+                NotifyOfPropertyChange(() => IsLoading);
             }
         }
 
-        private void MediaCapture_Failed(MediaCapture sender, MediaCaptureFailedEventArgs errorEventArgs)
+        public async Task SignUp()
         {
-            throw new NotImplementedException();
+            await _events.PublishOnUIThreadAsync(new SignUpEvent());
         }
 
         public async Task LogIn()
@@ -129,18 +102,34 @@ namespace ExamInDesktopUI.ViewModels
             try
             {
                 ErrorMessage = null;
-                //await TakeSnapshotAsync();
-                //var _res = _cloudEndPoint.GetFace();
 
-                var result = await _apiHelper.Authenticate(UserName, Password);
-
-                await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
+                await LoadAuthenticate();
 
                 await _events.PublishOnUIThreadAsync(new LogOnEvent());
             }
             catch (Exception ex)
             {
+                IsLoading = false;
                 ErrorMessage = ex.Message;
+            }
+        }
+
+        private async Task LoadAuthenticate()
+        {
+            try
+            {
+                IsLoading = true;
+                var result = await _apiHelper.Authenticate(UserName, Password);
+                await _apiHelper.GetLoggedInUserInfo(result.Access_Token);
+                if (await _apiHelper.AuthenticateUserFace() != true)
+                {
+                    throw new Exception("Face was not found.");
+                }
+                IsLoading = false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

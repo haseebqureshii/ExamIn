@@ -1,8 +1,8 @@
+using ExamInDataManager.Areas.HelpPage.ModelDescriptions;
+using ExamInDataManager.Areas.HelpPage.Models;
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using ExamInDataManager.Areas.HelpPage.ModelDescriptions;
-using ExamInDataManager.Areas.HelpPage.Models;
 
 namespace ExamInDataManager.Areas.HelpPage.Controllers
 {

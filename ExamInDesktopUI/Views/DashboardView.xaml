@@ -3,28 +3,32 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ExamInDesktopUI.Views" xmlns:viewmodels="clr-namespace:ExamInDesktopUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:DashboardViewModel}"
+             xmlns:local="clr-namespace:ExamInDesktopUI.Views" 
+             xmlns:viewmodels="clr-namespace:ExamInDesktopUI.ViewModels" xmlns:mde="https://spiegelp.github.io/MaterialDesignExtensions/winfx/xaml" d:DataContext="{d:DesignInstance Type=viewmodels:DashboardViewModel}"
              Background="WhiteSmoke"
              FontSize="18"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock
+            <TextBlock
             x:Name="UserName"
             Text="{Binding UserName}" 
             Grid.Row="1"
@@ -35,7 +39,7 @@
             FontFamily="Segoe UI Light"
             Foreground="DarkSlateGray"/>
 
-        <TextBlock
+            <TextBlock
             Grid.Row="2"
             Grid.Column="1"
             Grid.ColumnSpan="1"
@@ -44,9 +48,9 @@
             FontFamily="Segoe UI Light"
             FontSize="40">
             ExamIn Dashboard
-        </TextBlock>
-        
-        <TextBlock
+            </TextBlock>
+
+            <TextBlock
             x:Name="FullName"
             Text="{Binding FullName}"
             Grid.Row="3"
@@ -57,7 +61,7 @@
             FontFamily="Segoe UI"
             Foreground="Black"/>
 
-        <TextBlock
+            <TextBlock
             Grid.Row="4"
             Grid.Column="1"
             Margin="20,20,0,0"
@@ -65,9 +69,9 @@
             FontFamily="Segoe UI Light"
             FontSize="16">
             Exam Link
-        </TextBlock>
-         
-        <TextBox
+            </TextBlock>
+
+            <TextBox
             x:Name="ExamLink"
             Grid.Row="5"
             Grid.Column="1"
@@ -77,17 +81,17 @@
             FontSize="14"
             Background="Azure"/>
 
-        <Button
+            <Button
             x:Name="Next"
             Grid.Row="6"
             Grid.Column="1"
             Margin="20,5"
             Padding="20,0"
             HorizontalAlignment="Right">
-            Next
-        </Button>
+                Next
+            </Button>
 
-        <TextBlock
+            <TextBlock
             x:Name="ErrorMessage"
             Grid.Row="6"
             Grid.Column="1"
@@ -98,5 +102,39 @@
             Foreground="Red"
             TextWrapping="Wrap"
             Visibility="{Binding IsErrVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
+
+            <!-- <Button
+            x:Name="RegisterFace"
+            Grid.Row="8"
+            Grid.Column="1"
+            Margin="20,20"
+            Padding="15,3"
+            HorizontalAlignment="Left">
+                Register Face
+            </Button> -->
+        </Grid>
+
+        <Grid>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <mde:BusyOverlay 
+                    Grid.Row="5"
+                    Grid.Column="1" 
+                    IsBusy="{Binding Path=IsLoading}" 
+                    Style="{StaticResource MaterialBusyOverlayCircular}"
+                    Background="White"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderThickness="5"/>
+        </Grid>
     </Grid>
 </UserControl>

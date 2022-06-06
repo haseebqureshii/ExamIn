@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using ExamInDesktopUI.EventModels;
+using ExamInDesktopUI.Helpers;
 using ExamInDesktopUI.Library.Models;
 using System;
 using System.Threading.Tasks;
@@ -10,11 +11,13 @@ namespace ExamInDesktopUI.ViewModels
     {
         private ILoggedInUserModel _loggedInUser;
         private IEventAggregator _events;
+        private IAPIHelper _apiHelper;
 
-        public DashboardViewModel(ILoggedInUserModel loggedInUser, IEventAggregator events)
+        public DashboardViewModel(ILoggedInUserModel loggedInUser, IEventAggregator events, IAPIHelper apiHelper)
         {
             _loggedInUser = loggedInUser;
             _events = events;
+            _apiHelper = apiHelper;
         }
 
         protected override void OnViewLoaded(object view)
@@ -38,8 +41,8 @@ namespace ExamInDesktopUI.ViewModels
         public string FullName
         {
             get { return _fullName; }
-            set 
-            { 
+            set
+            {
                 _fullName = value;
                 NotifyOfPropertyChange(() => FullName);
             }
@@ -47,7 +50,7 @@ namespace ExamInDesktopUI.ViewModels
 
         public void FetchUserInfo()
         {
-            UserName =  _loggedInUser.EmailAddress;
+            UserName = _loggedInUser.EmailAddress;
             FullName = _loggedInUser.FirstName + " " + _loggedInUser.LastName;
         }
 
@@ -55,8 +58,8 @@ namespace ExamInDesktopUI.ViewModels
         public string ExamLink
         {
             get { return _examLink; }
-            set 
-            { 
+            set
+            {
                 _examLink = value;
                 NotifyOfPropertyChange(() => ExamLink);
             }
@@ -88,6 +91,32 @@ namespace ExamInDesktopUI.ViewModels
                 return output;
             }
         }
+
+        private bool _isLoading;
+        public bool IsLoading
+        {
+            get { return _isLoading; }
+            set
+            {
+                _isLoading = value;
+                NotifyOfPropertyChange(() => IsLoading);
+            }
+        }
+
+        //public async Task RegisterFace()
+        //{
+        //    try
+        //    {
+        //        IsLoading = true;
+        //        await _apiHelper.SaveNewUserFace(_loggedInUser.EmailAddress);
+        //        IsLoading = false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IsLoading = false;
+        //        ErrorMessage = ex.Message;
+        //    }
+        //}
 
         public async Task NextAsync()
         {
